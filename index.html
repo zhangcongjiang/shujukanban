@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <style>
         /* 原有样式保持不变 */
@@ -9,19 +10,31 @@
             margin: 20px 0;
             font-family: Arial, sans-serif;
         }
+
         th {
             background-color: #2c3e50;
             color: white;
             padding: 15px;
             text-align: left;
         }
+
         td {
             padding: 12px;
             border-bottom: 1px solid #ddd;
         }
-        .completed { background-color: #d4edda; }
-        .in-progress { background-color: #fff3cd; }
-        .not-started { background-color: #f8d7da; }
+
+        .completed {
+            background-color: #d4edda;
+        }
+
+        .in-progress {
+            background-color: #fff3cd;
+        }
+
+        .not-started {
+            background-color: #f8d7da;
+        }
+
         .progress-bar {
             width: 100px;
             height: 20px;
@@ -30,12 +43,13 @@
             display: inline-block;
             vertical-align: middle;
         }
+
         .progress-fill {
             height: 100%;
             border-radius: 3px;
             background-color: #4CAF50;
         }
-        
+
         /* 新增编辑相关样式 */
         .edit-form {
             background: #f5f5f5;
@@ -43,20 +57,25 @@
             margin: 20px 0;
             border-radius: 5px;
         }
+
         .form-group {
             margin-bottom: 15px;
         }
+
         label {
             display: inline-block;
             width: 120px;
             font-weight: bold;
         }
-        input, select {
+
+        input,
+        select {
             padding: 8px;
             width: 200px;
             border: 1px solid #ddd;
             border-radius: 4px;
         }
+
         button {
             padding: 8px 15px;
             background-color: #2c3e50;
@@ -66,21 +85,26 @@
             cursor: pointer;
             margin-right: 10px;
         }
+
         button:hover {
             background-color: #1a252f;
         }
+
         .action-btns {
             margin-top: 10px;
         }
-        .edit-btn, .delete-btn {
+
+        .edit-btn,
+        .delete-btn {
             padding: 5px 10px;
             font-size: 12px;
         }
     </style>
 </head>
+
 <body>
     <h1>三甲创建工作进度公示板</h1>
-    
+
     <!-- 新增数据表单 -->
     <div class="edit-form">
         <h2>添加/编辑项目</h2>
@@ -110,7 +134,7 @@
             <button id="cancelBtn" style="display:none">取消编辑</button>
         </div>
     </div>
-    
+
     <!-- 数据表格 -->
     <table class="dashboard" id="progressTable">
         <thead>
@@ -140,23 +164,23 @@
         // 全局变量
         let currentData = [];
         let editingId = null;
-        
+
         // DOM加载完成后执行
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             loadData();
-            
+
             // 绑定按钮事件
             document.getElementById('addBtn').addEventListener('click', addItem);
             document.getElementById('updateBtn').addEventListener('click', updateItem);
             document.getElementById('cancelBtn').addEventListener('click', cancelEdit);
         });
-        
+
         // 加载数据
         async function loadData() {
             try {
                 const response = await fetch('data.json');
                 if (!response.ok) throw new Error('Network response was not ok');
-                
+
                 currentData = await response.json();
                 renderTable();
             } catch (error) {
@@ -164,12 +188,12 @@
                 showError('加载数据失败，请确保data.json文件存在且格式正确。');
             }
         }
-        
+
         // 渲染表格
         function renderTable() {
             const tableBody = document.getElementById('tableBody');
             tableBody.innerHTML = '';
-            
+
             // 按责任部门分组数据
             const groupedData = {};
             currentData.forEach((item, index) => {
@@ -179,52 +203,52 @@
                 }
                 groupedData[item.department].push(item);
             });
-            
+
             // 为每个部门创建行
             Object.keys(groupedData).forEach(department => {
                 const departmentItems = groupedData[department];
-                
+
                 departmentItems.forEach((item, index) => {
                     const row = document.createElement('tr');
                     row.dataset.id = item.id;
-                    
+
                     // 如果是部门的第一项，添加rowspan
                     if (index === 0) {
                         const departmentCell = document.createElement('td');
                         departmentCell.rowSpan = departmentItems.length;
                         departmentCell.textContent = item.department;
                         row.appendChild(departmentCell);
-                        
+
                         const leaderCell = document.createElement('td');
                         leaderCell.rowSpan = departmentItems.length;
                         leaderCell.textContent = item.leader;
                         row.appendChild(leaderCell);
                     }
-                    
+
                     // 项目名称
                     const projectCell = document.createElement('td');
                     projectCell.textContent = item.project;
                     row.appendChild(projectCell);
-                    
+
                     // 时间节点
                     const deadlineCell = document.createElement('td');
                     deadlineCell.textContent = item.deadline;
                     row.appendChild(deadlineCell);
-                    
+
                     // 自评分数
                     const scoreCell = document.createElement('td');
                     const progressBar = document.createElement('div');
                     progressBar.className = 'progress-bar';
-                    
+
                     const progressFill = document.createElement('div');
                     progressFill.className = 'progress-fill';
                     progressFill.style.width = `${item.score}%`;
-                    
+
                     progressBar.appendChild(progressFill);
                     scoreCell.appendChild(progressBar);
                     scoreCell.appendChild(document.createTextNode(` ${item.score}/100`));
                     row.appendChild(scoreCell);
-                    
+
                     // 完成程度
                     const statusCell = document.createElement('td');
                     if (item.score >= 100) {
@@ -238,28 +262,28 @@
                         statusCell.textContent = '未启动';
                     }
                     row.appendChild(statusCell);
-                    
+
                     // 操作按钮
                     const actionCell = document.createElement('td');
                     const editBtn = document.createElement('button');
                     editBtn.className = 'edit-btn';
                     editBtn.textContent = '编辑';
                     editBtn.addEventListener('click', () => startEdit(item.id));
-                    
+
                     const deleteBtn = document.createElement('button');
                     deleteBtn.className = 'delete-btn';
                     deleteBtn.textContent = '删除';
                     deleteBtn.addEventListener('click', () => deleteItem(item.id));
-                    
+
                     actionCell.appendChild(editBtn);
                     actionCell.appendChild(deleteBtn);
                     row.appendChild(actionCell);
-                    
+
                     tableBody.appendChild(row);
                 });
             });
         }
-        
+
         // 添加新项目
         async function addItem() {
             const newItem = {
@@ -269,50 +293,50 @@
                 deadline: document.getElementById('deadline').value,
                 score: parseInt(document.getElementById('score').value)
             };
-            
+
             if (!validateForm(newItem)) return;
-            
+
             currentData.push(newItem);
             await saveData();
             resetForm();
             renderTable();
         }
-        
+
         // 开始编辑项目
         function startEdit(id) {
             const item = currentData.find(item => item.id === id);
             if (!item) return;
-            
+
             editingId = id;
             document.getElementById('department').value = item.department;
             document.getElementById('leader').value = item.leader;
             document.getElementById('project').value = item.project;
             document.getElementById('deadline').value = item.deadline;
             document.getElementById('score').value = item.score;
-            
+
             document.getElementById('addBtn').style.display = 'none';
             document.getElementById('updateBtn').style.display = 'inline-block';
             document.getElementById('cancelBtn').style.display = 'inline-block';
         }
-        
+
         // 更新项目
         async function updateItem() {
             const item = currentData.find(item => item.id === editingId);
             if (!item) return;
-            
+
             item.department = document.getElementById('department').value;
             item.leader = document.getElementById('leader').value;
             item.project = document.getElementById('project').value;
             item.deadline = document.getElementById('deadline').value;
             item.score = parseInt(document.getElementById('score').value);
-            
+
             if (!validateForm(item)) return;
-            
+
             await saveData();
             cancelEdit();
             renderTable();
         }
-        
+
         // 取消编辑
         function cancelEdit() {
             editingId = null;
@@ -321,56 +345,56 @@
             document.getElementById('updateBtn').style.display = 'none';
             document.getElementById('cancelBtn').style.display = 'none';
         }
-        
+
         // 删除项目
         async function deleteItem(id) {
             if (!confirm('确定要删除这个项目吗？')) return;
-            
+
             currentData = currentData.filter(item => item.id !== id);
             await saveData();
             renderTable();
         }
-        
-async function saveData() {
-    try {
-        const response = await fetch('/api/save', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(currentData)
-        });
-        
-        if (!response.ok) throw new Error('保存失败');
-        
-        const result = await response.json();
-        alert('数据保存成功');
-    } catch (error) {
-        console.error('保存错误:', error);
-        alert('保存失败: ' + error.message);
-    }
-}
-        
+
+        async function saveData() {
+            try {
+                const response = await fetch('/api/save', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(currentData)
+                });
+
+                if (!response.ok) throw new Error('保存失败');
+
+                const result = await response.json();
+                alert('数据保存成功');
+            } catch (error) {
+                console.error('保存错误:', error);
+                alert('保存失败: ' + error.message);
+            }
+        }
+
         // 表单验证
         function validateForm(item) {
             if (!item.department || !item.leader || !item.project || !item.deadline) {
                 alert('请填写所有字段');
                 return false;
             }
-            
+
             if (isNaN(item.score) {
                 alert('分数必须是数字');
                 return false;
             }
-            
+
             if (item.score < 0 || item.score > 100) {
                 alert('分数必须在0-100之间');
                 return false;
             }
-            
+
             return true;
         }
-        
+
         // 重置表单
         function resetForm() {
             document.getElementById('department').value = '';
@@ -379,7 +403,7 @@ async function saveData() {
             document.getElementById('deadline').value = '';
             document.getElementById('score').value = '';
         }
-        
+
         // 显示错误
         function showError(message) {
             const tableBody = document.getElementById('tableBody');
@@ -394,4 +418,5 @@ async function saveData() {
         }
     </script>
 </body>
+
 </html>
