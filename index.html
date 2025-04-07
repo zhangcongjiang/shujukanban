@@ -331,34 +331,25 @@
             renderTable();
         }
         
-        // 保存数据到JSON文件
-        async function saveData() {
-            // 注意：前端JavaScript不能直接写入文件系统
-            // 这里需要后端支持或使用其他存储方案
-            
-            // 方案1: 使用浏览器控制台输出数据（开发用）
-            console.log('更新后的数据:', JSON.stringify(currentData, null, 2));
-            alert('数据已更新（实际需要后端支持保存）');
-            
-            /* 
-            // 方案2: 如果有后端API，可以这样发送数据
-            try {
-                const response = await fetch('/api/save-data', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(currentData)
-                });
-                
-                if (!response.ok) throw new Error('保存失败');
-                alert('数据保存成功');
-            } catch (error) {
-                console.error('保存错误:', error);
-                alert('保存失败: ' + error.message);
-            }
-            */
-        }
+async function saveData() {
+    try {
+        const response = await fetch('/api/save', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(currentData)
+        });
+        
+        if (!response.ok) throw new Error('保存失败');
+        
+        const result = await response.json();
+        alert('数据保存成功');
+    } catch (error) {
+        console.error('保存错误:', error);
+        alert('保存失败: ' + error.message);
+    }
+}
         
         // 表单验证
         function validateForm(item) {
