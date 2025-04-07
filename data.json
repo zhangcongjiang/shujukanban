@@ -1,0 +1,43 @@
+[{
+		"department": "管理一组",
+		"leader": "刘自强",
+		"project": "组织架构建设",
+		"deadline": "2023-12-31",
+		"score": 85
+	},
+	{
+		"department": "管理一组",
+		"leader": "刘自强",
+		"project": "制度流程优化",
+		"deadline": "2024-03-31",
+		"score": 45
+	},
+	{
+		"department": "管理一组",
+		"leader": "刘自强",
+		"project": "质量监控体系",
+		"deadline": "2024-06-30",
+		"score": 10
+	},
+	{
+		"department": "医疗一组",
+		"leader": "王建国",
+		"project": "诊疗规范升级",
+		"deadline": "2023-11-30",
+		"score": 100
+	},
+	{
+		"department": "宣传一组",
+		"leader": "田星",
+		"project": "质量监控体系",
+		"deadline": "2024-06-30",
+		"score": 100
+	},
+	{
+		"department": "开发一组",
+		"leader": "张从江",
+		"project": "诊疗规范升级",
+		"deadline": "2023-11-30",
+		"score": 70
+	}
+]
